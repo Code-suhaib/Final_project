@@ -100,7 +100,7 @@ function User() {
         <div className="mt-5">
           <h4>Live Location of Bus #{selectedBus}</h4>
           {busLocation ? (
-            <LoadScript googleMapsApiKey=" your api key here ">
+            <LoadScript googleMapsApiKey=" your api key ">
               <GoogleMap
                 mapContainerStyle={mapContainerStyle}
                 center={busLocation}
