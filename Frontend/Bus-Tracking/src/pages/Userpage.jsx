@@ -1,22 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
+import axios from 'axios';
 
 const mapContainerStyle = {
   width: '100%',
   height: '400px',
-};
-
-// Mock bus locations (simulate GPS)
-const busLocations = {
-  1: { lat: 18.5204, lng: 73.8567 }, // Route A
-  2: { lat: 18.508, lng: 73.831 },   // Route B
-  3: { lat: 18.613, lng: 73.712 },   // Route C
-  4: { lat: 18.490, lng: 73.850 },
-  5: { lat: 18.540, lng: 73.760 },
-  6: { lat: 18.560, lng: 73.800 },
-  7: { lat: 18.570, lng: 73.820 },
-  8: { lat: 18.585, lng: 73.740 },
 };
 
 const availableRoutes = {
@@ -34,6 +23,8 @@ function User() {
   const navigate = useNavigate();
   const [busNumber, setBusNumber] = useState('');
   const [selectedBus, setSelectedBus] = useState(null);
+  const [busLocation, setBusLocation] = useState(null);
+  const [error, setError] = useState('');
 
   const email = localStorage.getItem('email');
   const role = localStorage.getItem('role');
@@ -44,17 +35,38 @@ function User() {
     }
   }, [email, role, navigate]);
 
+  useEffect(() => {
+    let interval;
+    if (selectedBus) {
+      fetchLocation(selectedBus); // initial call
+      interval = setInterval(() => fetchLocation(selectedBus), 10000); // refresh every 10s
+    }
+    return () => clearInterval(interval);
+  }, [selectedBus]);
+
+  const fetchLocation = async (busNum) => {
+    try {
+      const res = await axios.get(`http://localhost:5000/api/location/${busNum}`);
+      setBusLocation({ lat: res.data.lat, lng: res.data.lng });
+      setError('');
+    } catch (err) {
+      setError('Unable to fetch bus location.');
+      setBusLocation(null);
+    }
+  };
+
   const handleLogout = () => {
     localStorage.clear();
     navigate('/login');
   };
 
   const handleBusTrack = () => {
-    if (busNumber < 1 || busNumber > 8) {
+    const num = parseInt(busNumber);
+    if (isNaN(num) || num < 1 || num > 8) {
       alert("Please enter a valid bus number between 1 and 8.");
       return;
     }
-    setSelectedBus(parseInt(busNumber));
+    setSelectedBus(num);
   };
 
   return (
@@ -68,7 +80,7 @@ function User() {
 
       {/* My Bus Section */}
       <div className="mt-4">
-        <h4>My Bus</h4>
+        <h4>Track My Bus</h4>
         <div className="input-group">
           <input
             type="number"
@@ -78,7 +90,7 @@ function User() {
             onChange={(e) => setBusNumber(e.target.value)}
           />
           <button className="btn btn-primary" onClick={handleBusTrack}>
-            Track My Bus
+            Track Bus
           </button>
         </div>
       </div>
@@ -87,23 +99,29 @@ function User() {
       {selectedBus && (
         <div className="mt-5">
           <h4>Live Location of Bus #{selectedBus}</h4>
-          <LoadScript googleMapsApiKey="YOUR_GOOGLE_MAPS_API_KEY">
-            <GoogleMap
-              mapContainerStyle={mapContainerStyle}
-              center={busLocations[selectedBus]}
-              zoom={13}
-            >
-              <Marker position={busLocations[selectedBus]} />
-            </GoogleMap>
-          </LoadScript>
+          {busLocation ? (
+            <LoadScript googleMapsApiKey=" your api key here ">
+              <GoogleMap
+                mapContainerStyle={mapContainerStyle}
+                center={busLocation}
+                zoom={14}
+              >
+                <Marker position={busLocation} />
+              </GoogleMap>
+            </LoadScript>
+          ) : (
+            <p className="text-danger">{error}</p>
+          )}
 
           {/* Show route details */}
-          <div className="mt-3">
-            <h5>Route Info:</h5>
-            <p><strong>Route:</strong> {availableRoutes[selectedBus].name}</p>
-            <p><strong>From:</strong> {availableRoutes[selectedBus].from}</p>
-            <p><strong>To:</strong> {availableRoutes[selectedBus].to}</p>
-          </div>
+          {availableRoutes[selectedBus] && (
+            <div className="mt-3">
+              <h5>Route Info:</h5>
+              <p><strong>Route:</strong> {availableRoutes[selectedBus].name}</p>
+              <p><strong>From:</strong> {availableRoutes[selectedBus].from}</p>
+              <p><strong>To:</strong> {availableRoutes[selectedBus].to}</p>
+            </div>
+          )}
         </div>
       )}
 
@@ -122,7 +140,6 @@ function User() {
       {/* Contact Admin */}
       <div className="mt-5">
         <h4>Contact Admin Desk</h4>
-        <p>If you have issues, please contact us at:</p>
         <ul>
           <li>Email: <a href="mailto:admin@busapp.com">admin@busapp.com</a></li>
           <li>Phone: +91 9876543210</li>

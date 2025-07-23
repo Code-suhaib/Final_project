@@ -5,6 +5,7 @@ import AboutUs from "./pages/AboutUs";
 import Login from "./pages/Loginpages";
 import Admin from "./pages/Adminpage";
 import User from "./pages/Userpage";
+import Driver from "./pages/Driverpage";
 function App() {
   return (
     <Routes>
@@ -14,7 +15,7 @@ function App() {
       <Route path="/login" element={<Login/>}/>
       <Route path="/admin" element={<Admin/>}/>
       <Route path="/user" element={<User/>}/> 
-      <Route path="/driver" element={<driver/>}/>
+      <Route path="/driver" element={<Driver/>}/>
     </Routes>
   );
 }

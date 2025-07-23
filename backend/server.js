@@ -8,18 +8,34 @@ const locationRoutes = require('./routes/location');
 dotenv.config();
 
 const app = express();
-app.use(cors({ origin: 'http://localhost:5173' }));
+
+// 🔐 CORS Setup (adjust origin as needed for frontend)
+app.use(cors({
+  origin: 'http://localhost:5173', // your React frontend
+  credentials: true
+}));
+
+// 🔧 Middleware
 app.use(express.json());
 
+// 📦 Routes
 app.use('/api', authRoutes);
 app.use('/api', locationRoutes);
 
-// CONNECT TO DB
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => {
-    console.log('✅ Connected to MongoDB');
-    app.listen(5000, () => console.log('🚀 Server running on port 5000'));
-  })
-  .catch((err) => {
-    console.error('❌ MongoDB connection error:', err);
+// 🧠 MongoDB Connection
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+.then(() => {
+  console.log('✅ Connected to MongoDB');
+
+  // 🚀 Start Server
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running on http://localhost:${PORT}`);
   });
+})
+.catch((err) => {
+  console.error('❌ MongoDB connection error:', err);
+});
