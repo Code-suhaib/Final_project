@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import MyNavbar from '../Components/MyNavbar';
 
 function Driver() {
   const [location, setLocation] = useState({ lat: null, lng: null });
@@ -51,6 +52,8 @@ function Driver() {
   };
 
   return (
+    <>
+    <MyNavbar/>
     <div className="container mt-5">
       <h2>Driver Dashboard</h2>
 
@@ -76,6 +79,7 @@ function Driver() {
         </>
       )}
     </div>
+    </>
   );
 }
 

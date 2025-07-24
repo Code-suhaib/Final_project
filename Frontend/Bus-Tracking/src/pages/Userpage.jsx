@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 import axios from 'axios';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
 const mapContainerStyle = {
   width: '100%',
@@ -38,8 +39,8 @@ function User() {
   useEffect(() => {
     let interval;
     if (selectedBus) {
-      fetchLocation(selectedBus); // initial call
-      interval = setInterval(() => fetchLocation(selectedBus), 10000); // refresh every 10s
+      fetchLocation(selectedBus);
+      interval = setInterval(() => fetchLocation(selectedBus), 10000);
     }
     return () => clearInterval(interval);
   }, [selectedBus]);
@@ -70,17 +71,27 @@ function User() {
   };
 
   return (
-    <div className="container mt-4">
-      <div className="text-end">
-        <button className="btn btn-danger" onClick={handleLogout}>Logout</button>
+    <div className="container mt-4 mb-5">
+      <div className="text-end mb-3">
+        <button className="btn btn-outline-danger rounded-pill px-4 py-2 shadow-sm" onClick={handleLogout}>
+          <i className="fas fa-sign-out-alt me-2"></i> Logout
+        </button>
       </div>
 
-      <h2 className="text-center fw-bold">🚌 User Dashboard</h2>
-      <p className="text-center text-muted">Logged in as: {email}</p>
+      <div className="p-4 bg-light rounded shadow-sm text-center mb-4">
+        <h2 className="fw-bold text-primary">
+          <i className="fas fa-user-circle me-2"></i> User Dashboard
+        </h2>
+        <p className="text-muted mb-0">
+          <i className="fas fa-envelope me-1"></i> Logged in as: <strong>{email}</strong>
+        </p>
+      </div>
 
       {/* My Bus Section */}
-      <div className="mt-4">
-        <h4>Track My Bus</h4>
+      <div className="card p-4 border-primary mb-4 shadow-sm">
+        <h4 className="text-primary mb-3">
+          <i className="fas fa-search-location me-2"></i> Track My Bus
+        </h4>
         <div className="input-group">
           <input
             type="number"
@@ -90,17 +101,19 @@ function User() {
             onChange={(e) => setBusNumber(e.target.value)}
           />
           <button className="btn btn-primary" onClick={handleBusTrack}>
-            Track Bus
+            <i className="fas fa-location-arrow me-2"></i> Track
           </button>
         </div>
       </div>
 
       {/* Live Bus Location */}
       {selectedBus && (
-        <div className="mt-5">
-          <h4>Live Location of Bus #{selectedBus}</h4>
+        <div className="card p-4 mb-4 shadow-sm">
+          <h4 className="text-success mb-3">
+            <i className="fas fa-map-marked-alt me-2"></i> Live Location of Bus #{selectedBus}
+          </h4>
           {busLocation ? (
-            <LoadScript googleMapsApiKey=" your api key ">
+            <LoadScript googleMapsApiKey="your-api-key-here">
               <GoogleMap
                 mapContainerStyle={mapContainerStyle}
                 center={busLocation}
@@ -113,10 +126,9 @@ function User() {
             <p className="text-danger">{error}</p>
           )}
 
-          {/* Show route details */}
           {availableRoutes[selectedBus] && (
             <div className="mt-3">
-              <h5>Route Info:</h5>
+              <h5><i className="fas fa-route me-2"></i> Route Info:</h5>
               <p><strong>Route:</strong> {availableRoutes[selectedBus].name}</p>
               <p><strong>From:</strong> {availableRoutes[selectedBus].from}</p>
               <p><strong>To:</strong> {availableRoutes[selectedBus].to}</p>
@@ -126,23 +138,28 @@ function User() {
       )}
 
       {/* All Routes Section */}
-      <div className="mt-5">
-        <h4>All Available Routes</h4>
+      <div className="card p-4 mb-4 shadow-sm">
+        <h4 className="text-info mb-3">
+          <i className="fas fa-list-ul me-2"></i> All Available Routes
+        </h4>
         <ul className="list-group">
           {Object.entries(availableRoutes).map(([id, route]) => (
-            <li key={id} className="list-group-item">
-              <strong>{route.name} (Bus #{id}):</strong> {route.from} → {route.to}
+            <li key={id} className="list-group-item d-flex justify-content-between align-items-center">
+              <span><strong>{route.name} (Bus #{id}):</strong></span>
+              <span className="text-muted">{route.from} → {route.to}</span>
             </li>
           ))}
         </ul>
       </div>
 
       {/* Contact Admin */}
-      <div className="mt-5">
-        <h4>Contact Admin Desk</h4>
-        <ul>
-          <li>Email: <a href="mailto:admin@busapp.com">admin@busapp.com</a></li>
-          <li>Phone: +91 9876543210</li>
+      <div className="card p-4 shadow-sm">
+        <h4 className="text-warning mb-3">
+          <i className="fas fa-headset me-2"></i> Contact Admin Desk
+        </h4>
+        <ul className="list-unstyled">
+          <li><i className="fas fa-envelope me-2 text-secondary"></i><a href="mailto:admin@busapp.com">admin@busapp.com</a></li>
+          <li><i className="fas fa-phone me-2 text-secondary"></i> +91 9876543210</li>
         </ul>
       </div>
     </div>

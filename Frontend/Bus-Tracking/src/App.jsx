@@ -6,6 +6,8 @@ import Login from "./pages/Loginpages";
 import Admin from "./pages/Adminpage";
 import User from "./pages/Userpage";
 import Driver from "./pages/Driverpage";
+import '@fortawesome/fontawesome-free/css/all.min.css';
+
 function App() {
   return (
     <Routes>

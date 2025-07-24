@@ -1,0 +1,19 @@
+body.bg-dark {
+  background-color: #121212 !important;
+  color: #ffffff !important;
+}
+
+.card.bg-dark,
+.list-group-item.bg-dark {
+  background-color: #1e1e1e !important;
+  border-color: #333 !important;
+  color: #ffffff;
+}
+
+.btn-darkmode {
+  background-color: #0d6efd;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+}
